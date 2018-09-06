@@ -17,10 +17,14 @@ public class MyMessageHandler extends TextWebSocketHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MyMessageHandler.class);
 
-  private List<WebSocketSession> sessions = new ArrayList<>();
+  public static List<WebSocketSession> sessions;
+
+  public MyMessageHandler() {
+    sessions = new ArrayList<>();
+  }
 
   @Override
-  public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+  public void afterConnectionEstablished(WebSocketSession session) {
     LOGGER.info("afterConnectionEstablished");
     sessions.add(session);
   }
@@ -29,16 +33,17 @@ public class MyMessageHandler extends TextWebSocketHandler {
   public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
       throws Exception {
     LOGGER.info("handleMessage");
-    distributeMessages((WebSocketMessage<String>) message);
+
+    distributeMessages(message);
   }
 
   @Override
-  protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+  protected void handleTextMessage(WebSocketSession session, TextMessage message) {
     LOGGER.info("handleTextMessage");
   }
 
   @Override
-  protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+  protected void handlePongMessage(WebSocketSession session, PongMessage message) {
     LOGGER.info("handlePongMessage");
   }
 
@@ -63,28 +68,22 @@ public class MyMessageHandler extends TextWebSocketHandler {
     return super.supportsPartialMessages();
   }
 
-  private void distributeMessages(WebSocketMessage<String> message) throws IOException {
+  private void distributeMessages(WebSocketMessage<?> message) throws IOException {
     for (WebSocketSession webSocketSession : sessions) {
-      LOGGER.info("SUBSCRIBERS : " + sessions.size());
 
       if (webSocketSession.isOpen()) {
-        LOGGER.info("Sending messages... " + webSocketSession.isOpen());
+        LOGGER.info("SOCKET OPEN: SENDING : " + message);
         webSocketSession.sendMessage(message);
       } else {
-        LOGGER.info("CLOSING CONNECTION : " + webSocketSession.getId());
+        LOGGER.info("SOCKET CLOSED : " + webSocketSession.getId());
         webSocketSession.close();
       }
     }
   }
 
   private void removeConnection(WebSocketSession session) {
-
-    for (int i = 0; i < sessions.size(); i++) {
-      if (session.getId().equals(sessions.get(i).getId())) {
-        LOGGER.info("Removing: " + sessions.get(i).getId());
-        sessions.remove(i);
-      }
-    }
+    sessions.remove(session);
   }
+
 
 }

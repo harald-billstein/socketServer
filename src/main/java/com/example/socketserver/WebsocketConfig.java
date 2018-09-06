@@ -23,7 +23,7 @@ public class WebsocketConfig implements WebSocketConfigurer {
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(myMessageHandler(), "/gs-guide-websocket").withSockJS();
+    registry.addHandler(myMessageHandler(), "/websocket").withSockJS();
   }
 
 }
