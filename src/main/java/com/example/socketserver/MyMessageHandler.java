@@ -32,8 +32,7 @@ public class MyMessageHandler extends TextWebSocketHandler {
   @Override
   public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
       throws Exception {
-    LOGGER.info("handleMessage");
-
+    LOGGER.info("INCOMING MASSAGE : " + message.getPayload());
     distributeMessages(message);
   }
 
@@ -72,7 +71,7 @@ public class MyMessageHandler extends TextWebSocketHandler {
     for (WebSocketSession webSocketSession : sessions) {
 
       if (webSocketSession.isOpen()) {
-        LOGGER.info("SOCKET OPEN: SENDING : " + message);
+        LOGGER.info("OUTGOING MESSAGE : " + message.getPayload());
         webSocketSession.sendMessage(message);
       } else {
         LOGGER.info("SOCKET CLOSED : " + webSocketSession.getId());
